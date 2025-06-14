@@ -110,7 +110,7 @@ const NewEventForm = () => {
       {errors.date && <Text>This is required.</Text>}
 
       <View>
-        <Label className="mb-2" nativeID="location2">
+        <Label className="mb-2" nativeID="location">
           Location
         </Label>
         <Controller
@@ -120,7 +120,7 @@ const NewEventForm = () => {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              aria-labelledby="location2"
+              aria-labelledby="location"
               placeholder="Location"
               onBlur={onBlur}
               onChangeText={onChange}
