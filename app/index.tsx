@@ -2,6 +2,7 @@ import { View } from "react-native";
 import Auth from "~/components/Auth";
 import NewEventButton from "~/components/NewEventButton";
 import RankingTable from "~/components/RankingTable";
+import { Text } from "~/components/ui/text";
 import { useAuth } from "~/context/auth-context";
 
 export default function Screen() {
@@ -9,7 +10,7 @@ export default function Screen() {
 
   return (
     <View className="flex-1">
-      {user?.email}
+      <Text>{user?.email}</Text>
       <Auth />
       <NewEventButton />
       <RankingTable />
