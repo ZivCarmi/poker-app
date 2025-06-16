@@ -1,85 +1,144 @@
-import { makeRedirectUri } from "expo-auth-session";
+import { makeRedirectUri, ResponseType } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
+import { useAuthRequest } from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
-import * as Linking from "expo-linking";
+import { Platform } from "react-native";
+import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
+import { useAuth } from "~/context/auth-context";
 import { supabase } from "~/lib/supabase";
-import { Button } from "./ui/button";
-import { Text } from "./ui/text";
 
-WebBrowser.maybeCompleteAuthSession(); // required for web only
-const redirectTo = makeRedirectUri();
-console.log({ redirectTo });
+const CLIENT_ID =
+  Platform.OS === "ios"
+    ? process.env.EXPO_PUBLIC_IOS_CLIENT_ID
+    : process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID;
+const SCOPES = ["openid", "https://www.googleapis.com/auth/userinfo.email"];
+const REDIRECT_URI = makeRedirectUri({
+  scheme: "com.zivcarmi.pokerapp",
+});
 
-const createSessionFromUrl = async (url: string) => {
-  const { params, errorCode } = QueryParams.getQueryParams(url);
-
-  if (errorCode) throw new Error(errorCode);
-  const { access_token, refresh_token } = params;
-
-  if (!access_token) return;
-
-  const { data, error } = await supabase.auth.setSession({
-    access_token,
-    refresh_token,
-  });
-  console.log("Session data:", data.session);
-
-  if (error) throw error;
-  return data.session;
-};
-
-const performOAuth = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo,
-      skipBrowserRedirect: true,
-    },
+export function performGoogleLogin() {
+  const [request, response, promptAsync] = useAuthRequest({
+    clientId: CLIENT_ID,
+    scopes: SCOPES,
+    redirectUri: REDIRECT_URI,
   });
 
-  console.log("OAuth data:", data);
-  console.log("OAuth error:", error);
+  const signIn = async () => {
+    const result = await promptAsync();
 
-  if (error) throw error;
+    console.log(result);
+  };
 
-  const res = await WebBrowser.openAuthSessionAsync(
-    data?.url ?? "",
-    redirectTo
-  );
+  return { request, response, signIn };
+}
+// WebBrowser.maybeCompleteAuthSession();
 
-  console.log("Auth session result:", res);
+// const discovery = {
+//   authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+//   tokenEndpoint: "https://oauth2.googleapis.com/token",
+//   revocationEndpoint: "https://accounts.google.com/o/oauth2/revoke",
+// };
 
-  if (res.type === "success") {
-    const { url } = res;
-    await createSessionFromUrl(url);
-  }
-};
+// const config = {
+//   androidClientId: process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID,
+//   iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID,
+//   webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
+// };
 
-const sendMagicLink = async () => {
-  const { error } = await supabase.auth.signInWithOtp({
-    email: "valid.email@supabase.io",
-    options: {
-      emailRedirectTo: redirectTo,
-    },
-  });
+// const redirectUri = makeRedirectUri({
+//   scheme: "com.zivcarmi.pokerapp",
+// });
 
-  if (error) throw error;
-  // Email sent.
-};
+// // console.log(makeRedirectUri({ scheme: "com.zivcarmi.pokerapp" }));
+
+// const createSessionFromUrl = async (url: string) => {
+//   const { params, errorCode } = QueryParams.getQueryParams(url);
+
+//   if (errorCode) throw new Error(errorCode);
+//   const { access_token, refresh_token } = params;
+
+//   if (!access_token) return;
+
+//   const { data, error } = await supabase.auth.setSession({
+//     access_token,
+//     refresh_token,
+//   });
+//   console.log("Session data:", data.session);
+
+//   if (error) throw error;
+//   return data.session;
+// };
+
+// export function performGoogleLogin() {
+//   const [request, response, promptAsync] = useAuthRequest(
+//     {
+//       responseType: ResponseType.IdToken,
+//       clientId:
+//         Platform.OS === "android"
+//           ? config.androidClientId
+//           : Platform.OS === "ios"
+//           ? config.iosClientId
+//           : config.webClientId,
+//       redirectUri,
+//       scopes: ["profile", "email"],
+//     }
+//   );
+
+//   const signIn = async () => {
+//     if (Platform.OS === "web") {
+//       const { data, error } = await supabase.auth.signInWithOAuth({
+//         provider: "google",
+//         options: {
+//           redirectTo: redirectUri,
+//           skipBrowserRedirect: true,
+//         },
+//       });
+
+//       console.log(error, data);
+
+//       if (error) throw error;
+
+//       const res = await WebBrowser.openAuthSessionAsync(
+//         data?.url ?? "",
+//         redirectUri
+//       );
+
+//       if (res.type === "success") {
+//         const { url } = res;
+//         await createSessionFromUrl(url);
+//       }
+//     } else {
+//       const result = await promptAsync();
+
+//       if (result?.type === "success") {
+//         const idToken = result.authentication?.idToken;
+//         if (idToken) {
+//           const { error } = await supabase.auth.signInWithIdToken({
+//             provider: "google",
+//             token: idToken,
+//           });
+
+//           if (error) {
+//             console.error("Supabase login error:", error.message);
+//           }
+//         }
+//       }
+//     }
+//   };
+
+//   return { request, response, signIn };
+// }
 
 export default function Auth() {
-  // Handle linking into app from email app.
-  const url = Linking.useURL();
-  if (url) createSessionFromUrl(url);
+  const { signIn } = performGoogleLogin();
+  const { user, loading } = useAuth();
+
+  if (user) return null; // If user is already logged in, don't show the button
 
   return (
-    <>
-      <Button onPress={performOAuth}>
-        <Text>Sign in with Google</Text>
-      </Button>
-      <Button onPress={sendMagicLink}>
-        <Text>Send Magic Link</Text>
-      </Button>
-    </>
+    <Button onPress={signIn} className="bg-blue-500">
+      <Text>Sign in with Google 2</Text>
+    </Button>
   );
 }
