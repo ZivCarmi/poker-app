@@ -1,15 +1,16 @@
+import { User } from "@supabase/supabase-js";
 import {
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useState,
-  ReactNode,
 } from "react";
-import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "~/lib/supabase";
 
 type AuthContextType = {
   user: User | null;
+  token: string | null;
   loading: boolean;
 };
 
@@ -17,12 +18,15 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
+
       setUser(data.session?.user ?? null);
+      setToken(data.session?.access_token || null);
       setLoading(false);
     };
 
@@ -40,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, token, loading }}>
       {children}
     </AuthContext.Provider>
   );

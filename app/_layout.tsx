@@ -16,6 +16,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { ThemeToggle } from "~/components/ThemeToggle";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { AuthProvider } from "~/context/auth-context";
+import { MeetingProvider } from "~/context/meeting-context";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -44,17 +45,19 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-        <Stack>
-          <Stack.Screen
-            name="index"
-            options={{
-              title: "Starter Base",
-              headerRight: () => <ThemeToggle />,
-            }}
-          />
-        </Stack>
-        <PortalHost />
+        <MeetingProvider>
+          {/* <StatusBar style={isDarkColorScheme ? "light" : "dark"} /> */}
+          <Stack>
+            <Stack.Screen
+              name="index"
+              options={{
+                title: "Home",
+                headerRight: () => <ThemeToggle />,
+              }}
+            />
+          </Stack>
+          <PortalHost />
+        </MeetingProvider>
       </ThemeProvider>
     </AuthProvider>
   );

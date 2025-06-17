@@ -1,5 +1,5 @@
 import { useWindowDimensions } from "react-native";
-import NewEventForm from "./NewEventForm";
+import NewMeetingForm from "./NewMeetingForm";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -9,12 +9,14 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Text } from "./ui/text";
+import { useState } from "react";
 
-const NewEventButton = () => {
+const NewMeetingButton = () => {
+  const [open, setOpen] = useState(false);
   const { width } = useWindowDimensions();
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Text>Create new event</Text>
@@ -24,10 +26,10 @@ const NewEventButton = () => {
         <DialogHeader>
           <DialogTitle>Create new event</DialogTitle>
         </DialogHeader>
-        <NewEventForm />
+        <NewMeetingForm onDialogClose={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   );
 };
 
-export default NewEventButton;
+export default NewMeetingButton;

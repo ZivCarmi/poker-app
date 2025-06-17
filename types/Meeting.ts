@@ -1,4 +1,4 @@
-export type PokerEvent = {
+export type Meeting = {
   id: string;
   createdBy: string;
   date: Date;

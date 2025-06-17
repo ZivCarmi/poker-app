@@ -8,8 +8,12 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Text } from "./ui/text";
+import { Meeting } from "~/types/Meeting";
+import { useAuth } from "~/context/auth-context";
+import { BASE_URL } from "~/api/config";
+import { useMeeting } from "~/context/meeting-context";
 
-const pokerEventSchema = z.object({
+const meetingSchema = z.object({
   date: z.date({
     required_error: "Date is required",
     invalid_type_error: "Invalid date",
@@ -17,9 +21,15 @@ const pokerEventSchema = z.object({
   location: z.string().optional(),
 });
 
-type EventSchemaType = z.infer<typeof pokerEventSchema>;
+type EventSchemaType = z.infer<typeof meetingSchema>;
 
-const NewEventForm = () => {
+type NewMeetingFormProps = {
+  onDialogClose: () => void;
+};
+
+const NewMeetingForm = ({ onDialogClose }: NewMeetingFormProps) => {
+  const { token } = useAuth();
+  const { addNewMeeting } = useMeeting();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempDate, setTempDate] = useState<Date | null>(null);
@@ -32,17 +42,44 @@ const NewEventForm = () => {
       date: new Date(),
       location: "",
     },
-    resolver: zodResolver(pokerEventSchema),
+    resolver: zodResolver(meetingSchema),
   });
 
   const showPickers = () => {
     setShowDatePicker(true);
   };
 
-  const onSubmit: SubmitHandler<EventSchemaType> = (data) => {
+  const onSubmit: SubmitHandler<EventSchemaType> = async (data) => {
+    const { location, date } = data;
+
+    const newMeetingData: Partial<Meeting> = {
+      date,
+      location,
+    };
+
     console.log("Form submitted with data:", data);
-    // Here you can handle the form submission, e.g., send data to an API
-    // Reset the form or navigate to another screen if needed
+
+    try {
+      const response = await fetch(`${BASE_URL}/meeting/new`, {
+        body: JSON.stringify(newMeetingData),
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      const resJson = await response.json();
+
+      addNewMeeting(resJson.data as Meeting);
+      onDialogClose();
+    } catch (error: any) {
+      throw new Error(error.message || "Request failed...");
+    }
   };
 
   return (
@@ -138,4 +175,4 @@ const NewEventForm = () => {
   );
 };
 
-export default NewEventForm;
+export default NewMeetingForm;

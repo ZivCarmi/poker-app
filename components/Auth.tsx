@@ -22,9 +22,9 @@ const createSessionFromUrl = async (url: string) => {
     access_token,
     refresh_token,
   });
-  console.log("Session data:", data.session);
 
   if (error) throw error;
+
   return data.session;
 };
 
@@ -55,7 +55,7 @@ const signIn = async () => {
 };
 
 const signOut = async () => {
-  const { error } = await supabase.auth.signOut(); //  sometimes work sometimes not, need to figure out
+  const { error } = await supabase.auth.signOut({ scope: "local" }); //  sometimes work sometimes not, need to figure out
 
   if (error) {
     console.error("Error signing out:", error);
@@ -71,8 +71,6 @@ export default function Auth() {
   if (loading) return <Text>Loading...</Text>;
 
   if (user) {
-    console.log(user);
-
     return (
       <Button onPress={signOut} className="bg-blue-500">
         <Text>Sign out</Text>
@@ -82,7 +80,7 @@ export default function Auth() {
 
   return (
     <Button onPress={signIn} className="bg-blue-500">
-      <Text>Sign in with Google 2</Text>
+      <Text>Sign in with Google</Text>
     </Button>
   );
 }
