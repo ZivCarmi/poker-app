@@ -6,17 +6,18 @@ import {
   Theme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { PortalHost } from "@rn-primitives/portal";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Appearance, Platform, View } from "react-native";
-import { NAV_THEME } from "~/lib/constants";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { PortalHost } from "@rn-primitives/portal";
+import { Appearance, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeToggle } from "~/components/ThemeToggle";
-import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { AuthProvider } from "~/context/auth-context";
 import { MeetingProvider } from "~/context/meeting-context";
+import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
+import { NAV_THEME } from "~/lib/constants";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -46,17 +47,19 @@ export default function RootLayout() {
     <AuthProvider>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
         <MeetingProvider>
-          {/* <StatusBar style={isDarkColorScheme ? "light" : "dark"} /> */}
-          <Stack>
-            <Stack.Screen
-              name="index"
-              options={{
-                title: "Home",
-                headerRight: () => <ThemeToggle />,
-              }}
-            />
-          </Stack>
-          <PortalHost />
+          <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar style="auto" />
+            <Stack>
+              <Stack.Screen
+                name="index"
+                options={{
+                  title: "Home",
+                  headerRight: () => <ThemeToggle />,
+                }}
+              />
+            </Stack>
+            <PortalHost />
+          </SafeAreaView>
         </MeetingProvider>
       </ThemeProvider>
     </AuthProvider>

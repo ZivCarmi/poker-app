@@ -78,6 +78,8 @@ const NewMeetingForm = ({ onDialogClose }: NewMeetingFormProps) => {
       addNewMeeting(resJson.data as Meeting);
       onDialogClose();
     } catch (error: any) {
+      console.log(error);
+
       throw new Error(error.message || "Request failed...");
     }
   };
