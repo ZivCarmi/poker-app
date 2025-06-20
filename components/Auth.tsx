@@ -1,5 +1,6 @@
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
+import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -67,6 +68,7 @@ const signOut = async () => {
 
 export default function Auth() {
   const { user, loading } = useAuth();
+  const { replace } = useRouter();
 
   if (loading) return <Text>Loading...</Text>;
 
@@ -79,7 +81,13 @@ export default function Auth() {
   }
 
   return (
-    <Button onPress={signIn} className="bg-blue-500">
+    <Button
+      onPress={async () => {
+        await signIn();
+        replace("./");
+      }}
+      className="bg-blue-500"
+    >
       <Text>Sign in with Google</Text>
     </Button>
   );

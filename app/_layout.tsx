@@ -6,24 +6,30 @@ import {
   Theme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { PortalHost } from "@rn-primitives/portal";
-import { Stack } from "expo-router";
+import {
+  Slot,
+  Stack,
+  Tabs,
+  useRootNavigationState,
+  useRouter,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Appearance, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemeToggle } from "~/components/ThemeToggle";
-import { AuthProvider } from "~/context/auth-context";
+import { AuthProvider, useAuth } from "~/context/auth-context";
 import { MeetingProvider } from "~/context/meeting-context";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemeToggle } from "~/components/ThemeToggle";
+import ThemeTabs from "~/components/ThemeTabs";
 
-const LIGHT_THEME: Theme = {
+export const LIGHT_THEME: Theme = {
   ...DefaultTheme,
   colors: NAV_THEME.light,
 };
-const DARK_THEME: Theme = {
+export const DARK_THEME: Theme = {
   ...DarkTheme,
   colors: NAV_THEME.dark,
 };
@@ -46,24 +52,35 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <MeetingProvider>
-          <SafeAreaView style={{ flex: 1 }}>
-            <StatusBar style="auto" />
-            <Stack>
-              <Stack.Screen
-                name="index"
-                options={{
-                  title: "Home",
-                  headerRight: () => <ThemeToggle />,
-                }}
-              />
-            </Stack>
-            <PortalHost />
-          </SafeAreaView>
-        </MeetingProvider>
+        <SafeAreaView style={{ flex: 1 }}>
+          <StatusBar
+            backgroundColor={
+              isDarkColorScheme
+                ? DARK_THEME.colors.background
+                : LIGHT_THEME.colors.background
+            }
+          />
+          <InnerLayout />
+        </SafeAreaView>
       </ThemeProvider>
     </AuthProvider>
   );
+}
+
+function InnerLayout() {
+  const { user } = useAuth();
+  const router = useRouter();
+  const navigationState = useRootNavigationState();
+
+  React.useEffect(() => {
+    if (!navigationState?.key) return;
+
+    if (!user) {
+      router.replace("/login");
+    }
+  }, [user]);
+
+  return <Slot />;
 }
 
 const useIsomorphicLayoutEffect =

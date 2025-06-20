@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
     <View className="flex-1">
-      <Text>{user?.email}</Text>
+      <Text className="text-center text-2xl">Poker App</Text>
       <Meetings />
       <Auth />
       {user && <NewMeetingButton />}
