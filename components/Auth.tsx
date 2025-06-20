@@ -67,14 +67,18 @@ const signOut = async () => {
 };
 
 export default function Auth() {
-  const { user, loading } = useAuth();
-  const { replace } = useRouter();
-
-  if (loading) return <Text>Loading...</Text>;
+  const { user } = useAuth();
+  const router = useRouter();
 
   if (user) {
     return (
-      <Button onPress={signOut} className="bg-blue-500">
+      <Button
+        onPress={async () => {
+          await signOut();
+          router.replace("/login");
+        }}
+        className="bg-blue-500"
+      >
         <Text>Sign out</Text>
       </Button>
     );
@@ -84,7 +88,7 @@ export default function Auth() {
     <Button
       onPress={async () => {
         await signIn();
-        replace("./");
+        router.replace("/");
       }}
       className="bg-blue-500"
     >

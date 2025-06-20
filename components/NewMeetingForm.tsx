@@ -154,9 +154,7 @@ const NewMeetingForm = ({ onDialogClose }: NewMeetingFormProps) => {
         </Label>
         <Controller
           control={control}
-          rules={{
-            maxLength: 100,
-          }}
+          rules={{ maxLength: 100 }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               aria-labelledby="location"

@@ -1,4 +1,5 @@
 import { User } from "@supabase/supabase-js";
+import { SplashScreen } from "expo-router";
 import {
   createContext,
   ReactNode,
@@ -8,18 +9,24 @@ import {
 } from "react";
 import { supabase } from "~/lib/supabase";
 
+SplashScreen.preventAutoHideAsync();
+
 type AuthContextType = {
+  isReady: boolean;
   user: User | null;
   token: string | null;
-  loading: boolean;
 };
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType>({
+  isReady: false,
+  user: null,
+  token: null,
+});
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isReady, setIsReady] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getSession = async () => {
@@ -27,7 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(data.session?.user ?? null);
       setToken(data.session?.access_token || null);
-      setLoading(false);
     };
 
     getSession();
@@ -38,13 +44,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
+    setIsReady(true);
+
     return () => {
       listener.subscription.unsubscribe();
     };
   }, []);
 
+  useEffect(() => {
+    if (isReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [isReady]);
+
   return (
-    <AuthContext.Provider value={{ user, token, loading }}>
+    <AuthContext.Provider value={{ isReady, user, token }}>
       {children}
     </AuthContext.Provider>
   );
