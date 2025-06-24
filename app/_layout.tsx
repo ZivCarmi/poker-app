@@ -6,11 +6,12 @@ import {
   Theme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { PortalHost } from "@rn-primitives/portal";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Appearance, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider } from "~/context/auth-context";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
@@ -24,6 +25,8 @@ export const DARK_THEME: Theme = {
   ...DarkTheme,
   colors: NAV_THEME.dark,
 };
+
+const client = new QueryClient();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -41,36 +44,37 @@ export default function RootLayout() {
   const { isDarkColorScheme } = useColorScheme();
 
   return (
-    <AuthProvider>
-      <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        {/* <SafeAreaView style={{ flex: 1 }}> */}
-        <StatusBar
-          backgroundColor={
-            isDarkColorScheme
-              ? DARK_THEME.colors.background
-              : LIGHT_THEME.colors.background
-          }
-          translucent={false}
-        />
-        <Stack>
-          <Stack.Screen
-            name="(protected)"
-            options={{
-              headerShown: false,
-              animation: "none",
-            }}
+    <QueryClientProvider client={client}>
+      <AuthProvider>
+        <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+          <StatusBar
+            backgroundColor={
+              isDarkColorScheme
+                ? DARK_THEME.colors.background
+                : LIGHT_THEME.colors.background
+            }
+            translucent={false}
           />
-          <Stack.Screen
-            name="login"
-            options={{
-              headerShown: false,
-              animation: "none",
-            }}
-          />
-        </Stack>
-        {/* </SafeAreaView> */}
-      </ThemeProvider>
-    </AuthProvider>
+          <Stack>
+            <Stack.Screen
+              name="(protected)"
+              options={{
+                headerShown: false,
+                animation: "none",
+              }}
+            />
+            <Stack.Screen
+              name="login"
+              options={{
+                headerShown: false,
+                animation: "none",
+              }}
+            />
+          </Stack>
+          <PortalHost />
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

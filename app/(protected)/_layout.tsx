@@ -1,9 +1,11 @@
 import { Redirect, Stack } from "expo-router";
 import { useAuth } from "~/context/auth-context";
+import { GroupProvider } from "~/context/group-context";
 import { MeetingProvider } from "~/context/meeting-context";
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)", // anchor
+  // Ensure any route can link back to `/`
+  initialRouteName: "(tabs)",
 };
 
 const ProtectedLayout = () => {
@@ -18,11 +20,13 @@ const ProtectedLayout = () => {
   }
 
   return (
-    <MeetingProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </MeetingProvider>
+    <GroupProvider>
+      <MeetingProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </MeetingProvider>
+    </GroupProvider>
   );
 };
 

@@ -1,11 +1,21 @@
-import { Tabs } from "expo-router";
+import { Tabs, useSegments } from "expo-router";
 import { Home, User, Users2 } from "lucide-react-native";
+import { View } from "react-native";
 import { DARK_THEME, LIGHT_THEME } from "~/app/_layout";
 import { ThemeToggle } from "~/components/ThemeToggle";
 import { useColorScheme } from "~/lib/useColorScheme";
 
+/////////////////
+// TO BE ENABLED
+/////////////////
+// export const unstable_settings = {
+//   // Ensure any route can link back to `/`
+//   initialRouteName: "index",
+// };
+
 const TabsLayout = () => {
   const { isDarkColorScheme } = useColorScheme();
+  const segment = useSegments();
 
   return (
     <Tabs
@@ -16,6 +26,7 @@ const TabsLayout = () => {
         tabBarStyle: {
           height: 70,
           paddingVertical: 0,
+          display: segment[3] ? "none" : "flex",
         },
         tabBarItemStyle: {
           alignItems: "center",
@@ -25,8 +36,9 @@ const TabsLayout = () => {
           paddingTop: 4,
           fontSize: 12,
         },
-        headerTitleStyle: {
-          fontSize: 22,
+        headerLeft: () => <View style={{ marginLeft: -16, marginRight: 16 }} />,
+        sceneStyle: {
+          paddingHorizontal: 12,
         },
         headerShadowVisible: false,
       }}

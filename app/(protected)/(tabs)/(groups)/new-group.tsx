@@ -3,7 +3,7 @@ import NewGroupForm from "~/components/NewGroupForm";
 
 const NewGroup = () => {
   return (
-    <View className="px-4">
+    <View>
       <NewGroupForm />
     </View>
   );

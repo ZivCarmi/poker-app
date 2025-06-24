@@ -1,6 +1,7 @@
-import { useWindowDimensions } from "react-native";
+import { useState } from "react";
+import { Pressable, ScrollView, useWindowDimensions } from "react-native";
+import { CalendarPlus } from "~/lib/icons/CalendarPlus";
 import NewMeetingForm from "./NewMeetingForm";
-import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,6 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Text } from "./ui/text";
-import { useState } from "react";
 
 const NewMeetingButton = () => {
   const [open, setOpen] = useState(false);
@@ -18,15 +18,19 @@ const NewMeetingButton = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Text>Create new event</Text>
-        </Button>
+        <Pressable onPress={() => setOpen(true)}>
+          <CalendarPlus className="text-foreground" />
+        </Pressable>
       </DialogTrigger>
       <DialogContent style={{ width: width - 40 }}>
-        <DialogHeader>
-          <DialogTitle>Create new event</DialogTitle>
-        </DialogHeader>
-        <NewMeetingForm onDialogClose={() => setOpen(false)} />
+        <ScrollView>
+          <DialogHeader>
+            <DialogTitle>
+              <Text>Create new event</Text>
+            </DialogTitle>
+          </DialogHeader>
+          <NewMeetingForm onDialogClose={() => setOpen(false)} />
+        </ScrollView>
       </DialogContent>
     </Dialog>
   );

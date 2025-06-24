@@ -34,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(data.session?.user ?? null);
       setToken(data.session?.access_token || null);
+      setIsReady(true);
     };
 
     getSession();
@@ -41,10 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
+        setToken(session?.access_token ?? null);
       }
     );
-
-    setIsReady(true);
 
     return () => {
       listener.subscription.unsubscribe();

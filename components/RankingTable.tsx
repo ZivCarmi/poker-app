@@ -12,9 +12,9 @@ import {
 } from "~/components/ui/table";
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
-import { Player } from "~/types/Player";
+import { User } from "~/types/User";
 
-const PLAYERS: Player[] = [
+const PLAYERS: User[] = [
   {
     id: "1",
     name: "Player 1",

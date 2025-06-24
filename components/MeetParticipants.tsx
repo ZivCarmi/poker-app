@@ -1,35 +1,67 @@
-import { useEffect, useState } from "react";
-import { View } from "react-native";
-import { getUsers } from "~/lib/utils";
-import { Participant } from "~/types/Player";
+import { FlashList } from "@shopify/flash-list";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import useFetchMeetingParticipants from "~/hooks/useFetchMeetingParticipants";
 import { Text } from "./ui/text";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { getFirstLetters } from "~/lib/utils";
 
-const MeetParticipants = ({ participantsId }: { participantsId: string[] }) => {
-  const [participant, setParticipant] = useState<Participant[]>([]);
+type FetchedMeetParticipant = {
+  user_id: string;
+  username: string;
+  avatar_url?: string;
+};
 
-  useEffect(() => {
-    getUsers(participantsId)
-      .then((participantsRes) => {
-        if (participantsRes && participantsRes.length > 0) {
-          setParticipant(participantsRes);
-        }
-      })
-      .catch((error) => console.log(error));
-  }, []);
+const MeetParticipants = ({ meetingId }: { meetingId: string }) => {
+  const {
+    data: participants,
+    isLoading,
+    error,
+    refetch,
+  } = useFetchMeetingParticipants(meetingId);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>{error.message}</Text>
+        <TouchableOpacity onPress={() => refetch()}>
+          <Text style={{ color: "blue", marginTop: 10 }}>נסה שוב</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
-    <View>
-      {participant.map((participant) => (
-        <MeetParticipant key={participant.id} participant={participant} />
-      ))}
-    </View>
+    <FlashList
+      data={participants}
+      estimatedItemSize={43}
+      renderItem={({ item: participant }) => (
+        <MeetParticipant key={participant.user_id} participant={participant} />
+      )}
+    />
   );
 };
 
-const MeetParticipant = ({ participant }: { participant: Participant }) => {
+const MeetParticipant = ({
+  participant,
+}: {
+  participant: FetchedMeetParticipant;
+}) => {
   return (
     <View>
-      <Text>{participant.username}</Text>
+      <Avatar alt={`${participant.username}'s Avatar`}>
+        <AvatarImage source={{ uri: participant.avatar_url }} />
+        <AvatarFallback>
+          <Text>{getFirstLetters(participant.username)}</Text>
+        </AvatarFallback>
+      </Avatar>
     </View>
   );
 };

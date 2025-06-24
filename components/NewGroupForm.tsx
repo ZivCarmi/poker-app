@@ -2,62 +2,50 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { z } from "zod";
-import { BASE_URL } from "~/api/config";
 import { useAuth } from "~/context/auth-context";
-import { Group } from "~/types/Group";
+import useCreateGroup from "~/hooks/useCreateGroup";
 import { Button } from "./ui/button";
-import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Text } from "./ui/text";
 
 const newGroupSchema = z.object({
-  name: z.string(),
+  name: z
+    .string()
+    .trim()
+    .min(1, { message: "Group name must be at least 1 character long" })
+    .max(60, { message: "Group name must be at most 60 characters" }),
 });
 
-type EventSchemaType = z.infer<typeof newGroupSchema>;
+export type GroupData = z.infer<typeof newGroupSchema>;
+
+export type GroupDataWithCreatedBy = GroupData & { createdBy: string };
 
 const NewGroupForm = () => {
-  const { token } = useAuth();
+  const { mutate } = useCreateGroup();
+  const { user } = useAuth();
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<EventSchemaType>({
-    defaultValues: {
-      name: "",
-    },
+  } = useForm<GroupData>({
+    defaultValues: { name: "" },
     resolver: zodResolver(newGroupSchema),
   });
 
-  const onSubmit: SubmitHandler<EventSchemaType> = async (data) => {
-    const { name } = data;
-
-    const newGroupData: Partial<Group> = { name };
-
+  const onSubmit: SubmitHandler<GroupData> = async (data) => {
     console.log("Form submitted with data:", data);
 
-    try {
-      const response = await fetch(`${BASE_URL}/groups/new`, {
-        body: JSON.stringify(newGroupData),
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
-      const resJson = await response.json();
-
-      console.log("todo");
-    } catch (error: any) {
-      console.log(error);
-
-      throw new Error(error.message || "Request failed...");
+    if (!user) {
+      console.error("Unauthorized user");
+      return;
     }
+
+    const newGroupData: GroupDataWithCreatedBy = {
+      name: data.name,
+      createdBy: user.id,
+    };
+
+    mutate(newGroupData);
   };
 
   return (
@@ -76,6 +64,9 @@ const NewGroupForm = () => {
           )}
           name="name"
         />
+        {errors.name && (
+          <Text className="pt-1 text-destructive">{errors.name.message}</Text>
+        )}
       </View>
 
       <Button onPress={handleSubmit(onSubmit)}>
