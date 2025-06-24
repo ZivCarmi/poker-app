@@ -6,6 +6,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getFirstLetters = (str: string) => {
+  if (!str) return;
+
   const matches = str.match(/\b(\w)/g);
   const acronym = matches?.join("");
   return acronym;

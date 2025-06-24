@@ -1,3 +1,4 @@
+import { CheckInMeetingData } from "~/components/Meetings";
 import { MeetingDataWithGroupIdAndCreatedBy } from "~/components/NewMeetingForm";
 import { supabase } from "~/lib/supabase";
 
@@ -40,6 +41,24 @@ export const fetchMeetingParticipants = async (meetingId: string) => {
       `
     )
     .eq("meeting_id", meetingId);
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const checkInMeeting = async (checkInData: CheckInMeetingData) => {
+  const { userId, meetingId, checkOut } = checkInData;
+
+  if (checkOut) {
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("meeting_participants")
+    .insert([{ user_id: userId, meeting_id: meetingId }])
+    .select()
+    .single();
 
   if (error) throw new Error(error.message);
 

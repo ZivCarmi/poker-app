@@ -1,5 +1,13 @@
 import { FlashList } from "@shopify/flash-list";
-import { ScrollView, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useAuth } from "~/context/auth-context";
+import useCheckInMeeting from "~/hooks/useCheckInMeeting";
+import useFetchMeetingParticipants from "~/hooks/useFetchMeetingParticipants";
 import { MapPin } from "~/lib/icons/MapPin";
 import { Meeting } from "~/types/Meeting";
 import MeetParticipants from "./MeetParticipants";
@@ -17,6 +25,12 @@ import { Text } from "./ui/text";
 import { Muted, Small } from "./ui/typography";
 
 type FetchedMeeting = Omit<Meeting, "groupId" | "createdAt">;
+
+export type CheckInMeetingData = {
+  checkOut?: boolean;
+  userId: string;
+  meetingId: string;
+};
 
 const Meetings = ({ meetings }: { meetings: FetchedMeeting[] }) => {
   if (meetings.length === 0) return null;
@@ -60,16 +74,88 @@ const Meetings = ({ meetings }: { meetings: FetchedMeeting[] }) => {
                 <Small>{meeting.location}</Small>
               </CardContent>
             )}
-            <CardFooter>
-              <MeetParticipants meetingId={meeting.id} />
-              <Button>
-                <Text>Check-in</Text>
-              </Button>
-            </CardFooter>
+            <MeetingCardFooter meetingId={meeting.id} />
           </Card>
         )}
       />
     </ScrollView>
+  );
+};
+
+const MeetingCardFooter = ({ meetingId }: { meetingId: string }) => {
+  const { user } = useAuth();
+  const {
+    data: participants,
+    isLoading,
+    error,
+    refetch,
+  } = useFetchMeetingParticipants(meetingId);
+  const isCheckedIn = participants?.find(
+    (participant) => user?.id === participant.user_id
+  );
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>{error.message}</Text>
+        <TouchableOpacity onPress={() => refetch()}>
+          <Text style={{ color: "blue", marginTop: 10 }}>נסה שוב</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return (
+    <CardFooter>
+      {participants && <MeetParticipants participants={participants} />}
+      <CheckInButton isCheckedIn={!!isCheckedIn} meetingId={meetingId} />
+    </CardFooter>
+  );
+};
+
+const CheckInButton = ({
+  isCheckedIn,
+  meetingId,
+}: {
+  isCheckedIn: boolean;
+  meetingId: string;
+}) => {
+  const { user } = useAuth();
+  const { mutate } = useCheckInMeeting();
+
+  console.log(meetingId, user?.id);
+
+  const checkIn = () => {
+    if (!user) {
+      console.error("Unauthenticated user");
+      return;
+    }
+
+    if (isCheckedIn) {
+      console.log("checked in returning...");
+      return;
+    }
+
+    const checkInMeetingData: CheckInMeetingData = {
+      userId: user.id,
+      meetingId,
+    };
+
+    mutate(checkInMeetingData);
+  };
+
+  return (
+    <Button onPress={checkIn}>
+      <Text>{isCheckedIn ? "Check-out" : "Check-in"}</Text>
+    </Button>
   );
 };
 

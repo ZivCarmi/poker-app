@@ -70,6 +70,13 @@ export default function RootLayout() {
                 animation: "none",
               }}
             />
+            <Stack.Screen
+              name="invite"
+              options={{
+                headerShown: false,
+                animation: "none",
+              }}
+            />
           </Stack>
           <PortalHost />
         </ThemeProvider>

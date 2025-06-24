@@ -12,7 +12,7 @@ const useCreateGroup = () => {
     mutationFn: createGroup,
     onSuccess: (group) => {
       console.log("Group created successfully:", group);
-      queryClient.invalidateQueries({ queryKey: ["groups"] });
+      queryClient.invalidateQueries({ queryKey: ["group", group.id] });
 
       replace({
         pathname: "/[groupId]",

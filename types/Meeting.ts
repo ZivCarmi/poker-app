@@ -9,3 +9,9 @@ export type Meeting = {
   status: "upcoming" | "ongoing" | "completed";
   createdAt: Date;
 };
+
+export type MeetingParticipant = {
+  userId: string;
+  meetingId: string;
+  joinedAt: string;
+};

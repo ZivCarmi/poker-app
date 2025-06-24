@@ -1,6 +1,30 @@
 import { GroupDataWithCreatedBy } from "~/components/NewGroupForm";
 import { supabase } from "~/lib/supabase";
 
+export const joinGroup = async ({
+  groupId,
+  userId,
+}: {
+  groupId: string;
+  userId: string;
+}) => {
+  const { data, error } = await supabase
+    .from("group_members")
+    .insert({
+      group_id: groupId,
+      user_id: userId,
+    })
+    .select()
+    .single();
+
+  console.log({ data });
+  console.log({ error });
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
 export const fetchUserGroups = async (userId?: string) => {
   const { data, error } = await supabase
     .from("group_members")

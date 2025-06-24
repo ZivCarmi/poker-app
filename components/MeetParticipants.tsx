@@ -1,9 +1,8 @@
 import { FlashList } from "@shopify/flash-list";
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
-import useFetchMeetingParticipants from "~/hooks/useFetchMeetingParticipants";
-import { Text } from "./ui/text";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { View } from "react-native";
 import { getFirstLetters } from "~/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Text } from "./ui/text";
 
 type FetchedMeetParticipant = {
   user_id: string;
@@ -11,33 +10,11 @@ type FetchedMeetParticipant = {
   avatar_url?: string;
 };
 
-const MeetParticipants = ({ meetingId }: { meetingId: string }) => {
-  const {
-    data: participants,
-    isLoading,
-    error,
-    refetch,
-  } = useFetchMeetingParticipants(meetingId);
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>{error.message}</Text>
-        <TouchableOpacity onPress={() => refetch()}>
-          <Text style={{ color: "blue", marginTop: 10 }}>נסה שוב</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
+const MeetParticipants = ({
+  participants,
+}: {
+  participants: FetchedMeetParticipant[];
+}) => {
   return (
     <FlashList
       data={participants}

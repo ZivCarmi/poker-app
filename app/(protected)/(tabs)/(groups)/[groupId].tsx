@@ -3,7 +3,6 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { fetchUserGroup } from "~/api/groups";
 import Meetings from "~/components/Meetings";
-import RankingTable from "~/components/RankingTable";
 import { Text } from "~/components/ui/text";
 
 const Group = () => {
@@ -41,7 +40,7 @@ const Group = () => {
     <View className="flex-1">
       <Stack.Screen options={{ headerShown: true, title: group.name }} />
       <Meetings meetings={group.meetings} />
-      <RankingTable />
+      {/* <RankingTable /> */}
     </View>
   );
 };
