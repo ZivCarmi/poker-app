@@ -44,12 +44,11 @@ const Groups = () => {
       estimatedItemSize={43}
       renderItem={({ item }) => (
         <Link
-          className="flex justify-between items-center py-2"
+          className="flex items-center py-2 rtl:bg-black"
           href={{ pathname: "/[groupId]", params: { groupId: item.group_id } }}
         >
-          <View className="flex flex-col gap-1">
+          <View className="flex flex-col gap-1 text-left">
             <Large>{item.name}</Large>
-            <Muted>5 members</Muted>
           </View>
           <ChevronRight className="text-foreground" />
         </Link>

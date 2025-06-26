@@ -7,6 +7,8 @@ export type Group = {
   created_at: Date;
   invite_token: string;
   invite_token_expires_at: Date;
+  members_count: number;
+  members: GroupMemberWithUser[];
 };
 
 export type GroupMember = {
@@ -14,4 +16,9 @@ export type GroupMember = {
   user_id: User["id"];
   role: "admin" | "member";
   joined_at: Date;
+};
+
+export type GroupMemberWithUser = GroupMember & {
+  username: User["username"];
+  avatar_url: string;
 };

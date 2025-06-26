@@ -11,7 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Appearance, Platform } from "react-native";
+import { Appearance, Platform, View } from "react-native";
 import { AuthProvider } from "~/context/auth-context";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
@@ -55,29 +55,33 @@ export default function RootLayout() {
             }
             translucent={false}
           />
-          <Stack>
-            <Stack.Screen
-              name="(protected)"
-              options={{
-                headerShown: false,
-                animation: "none",
-              }}
-            />
-            <Stack.Screen
-              name="login"
-              options={{
-                headerShown: false,
-                animation: "none",
-              }}
-            />
-            <Stack.Screen
-              name="invite"
-              options={{
-                headerShown: false,
-                animation: "none",
-              }}
-            />
-          </Stack>
+          <View className="flex-1 justify-center items-center">
+            <View className="w-full h-full max-w-screen-sm">
+              <Stack>
+                <Stack.Screen
+                  name="(protected)"
+                  options={{
+                    headerShown: false,
+                    animation: "none",
+                  }}
+                />
+                <Stack.Screen
+                  name="login"
+                  options={{
+                    headerShown: false,
+                    animation: "none",
+                  }}
+                />
+                <Stack.Screen
+                  name="invite"
+                  options={{
+                    headerShown: false,
+                    animation: "none",
+                  }}
+                />
+              </Stack>
+            </View>
+          </View>
           <PortalHost />
         </ThemeProvider>
       </AuthProvider>

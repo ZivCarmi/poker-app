@@ -17,24 +17,27 @@ import { User } from "~/types/User";
 const PLAYERS: User[] = [
   {
     id: "1",
-    name: "Player 1",
+    username: "Player 1",
     gamesPlayed: 10,
     moneyEarned: 400,
     moneySpent: 650,
+    avatar_url: "",
   },
   {
     id: "2",
-    name: "Player 2",
+    username: "Player 2",
     gamesPlayed: 8,
     moneyEarned: 800,
     moneySpent: 300,
+    avatar_url: "",
   },
   {
     id: "3",
-    name: "Player 3",
+    username: "Player 3",
     gamesPlayed: 5,
     moneyEarned: 500,
     moneySpent: 200,
+    avatar_url: "",
   },
 ];
 
@@ -92,7 +95,7 @@ function RankingTable() {
                   )}
                 >
                   <TableCell style={{ width: columnWidths[0] }}>
-                    <Text className="text-center">{player.name}</Text>
+                    <Text className="text-center">{player.username}</Text>
                   </TableCell>
                   <TableCell style={{ width: columnWidths[1] }}>
                     <Text className="text-center">{player.gamesPlayed}</Text>

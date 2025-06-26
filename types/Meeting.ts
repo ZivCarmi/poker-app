@@ -10,6 +10,7 @@ export type Meeting = {
   location?: string;
   status: "upcoming" | "ongoing" | "completed";
   created_at: Date;
+  participants_count: number;
 };
 
 export type MeetingParticipant = {

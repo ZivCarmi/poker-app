@@ -25,9 +25,7 @@ export const fetchUserGroups = async (userId?: string) => {
     .select(
       `
       group_id,
-      ...group_id (
-        name
-      )
+      ...group_id (name)
       `
     )
     .eq("user_id", userId);
@@ -39,12 +37,20 @@ export const fetchUserGroups = async (userId?: string) => {
 
 export const fetchGroup = async (groupId: string) => {
   const { data, error } = await supabase
-    .from("groups")
+    .from("groups_with_members_count")
     .select(
       `
       *,
-      meetings (
-        id, created_by, title, description, location, date, status,
+      members:group_members (
+        user_id,
+        role,
+        ...users (
+          username,
+          avatar_url
+        )
+      ),
+      meetings:meetings_with_participant_count (
+        id, created_by, title, description, location, date, status, participants_count,
         meeting_participants (
           user_id,
           ...users (
@@ -56,7 +62,7 @@ export const fetchGroup = async (groupId: string) => {
       `
     )
     .eq("id", groupId)
-    .order("date", { referencedTable: "meetings" })
+    .order("date", { referencedTable: "meetings_with_participant_count" })
     .single();
 
   if (error) throw new Error(error.message);

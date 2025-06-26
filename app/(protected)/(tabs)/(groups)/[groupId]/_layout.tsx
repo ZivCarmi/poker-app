@@ -54,7 +54,7 @@ const GroupLayout = () => {
                 <Link
                   className="grow text-left"
                   href={{
-                    pathname: "/[groupId]/members",
+                    pathname: "/[groupId]/group-info",
                     params: { groupId: group.id },
                   }}
                 >
@@ -65,7 +65,10 @@ const GroupLayout = () => {
             ),
           }}
         />
-        <Stack.Screen name="members" options={{ headerTitle: "Members" }} />
+        <Stack.Screen
+          name="group-info"
+          options={{ headerTitle: "Group info" }}
+        />
       </Stack>
     </GroupProvider>
   );
