@@ -8,10 +8,10 @@ import { useColorScheme } from "~/lib/useColorScheme";
 /////////////////
 // TO BE ENABLED
 /////////////////
-// export const unstable_settings = {
-//   // Ensure any route can link back to `/`
-//   initialRouteName: "index",
-// };
+export const unstable_settings = {
+  // Ensure any route can link back to `/`
+  initialRouteName: "index",
+};
 
 const TabsLayout = () => {
   const { isDarkColorScheme } = useColorScheme();

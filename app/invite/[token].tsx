@@ -35,8 +35,18 @@ export default function InvitePage() {
     isLoading: isMembershipLoading,
     error: membershipError,
     refetch: refetchIsUserInGroup,
-  } = useIsUserInGroup(group?.id, user?.id);
+  } = useIsUserInGroup(user?.id, group?.id);
   const { mutate: joinGroup, error: joinGroupError } = useJoinGroup();
+
+  console.log({
+    isUserInGroup,
+    isMembershipLoading,
+    membershipError,
+    dependencies: {
+      group,
+      user: !!user?.id,
+    },
+  });
 
   const handleJoin = async () => {
     if (!user) {
