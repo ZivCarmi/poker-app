@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUserGroups } from "~/api/groups";
 import { useAuth } from "~/context/auth-context";
 
-const useFetchUserGroups = () => {
+const useUserGroups = () => {
   const { user } = useAuth();
 
   return useQuery({
@@ -12,4 +12,4 @@ const useFetchUserGroups = () => {
   });
 };
 
-export default useFetchUserGroups;
+export default useUserGroups;

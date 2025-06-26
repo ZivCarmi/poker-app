@@ -1,31 +1,34 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import { Group } from "~/types/Group";
+import { MeetingWithParticipants } from "~/types/Meeting";
 
-type GroupContextType = {
-  groups: Group[];
-  addNewGroup: (newGroup: Group) => void;
+type GroupContextType = Group & {
+  meetings: MeetingWithParticipants[];
 };
 
 const GroupContext = createContext<GroupContextType>({
-  groups: [],
-  addNewGroup: () => {},
+  id: "",
+  name: "",
+  created_by: "",
+  created_at: new Date(),
+  invite_token: "",
+  invite_token_expires_at: new Date(),
+  meetings: [],
 });
 
-export function GroupProvider({ children }: { children: ReactNode }) {
-  const [groups, setGroups] = useState<Group[]>([]);
-
-  const addNewGroup = (newGroup: Group) => {
-    setGroups((prevGroups) => [...prevGroups, newGroup]);
-  };
-
+export function GroupProvider({
+  group,
+  children,
+}: {
+  group: GroupContextType;
+  children: ReactNode;
+}) {
   return (
-    <GroupContext.Provider value={{ groups, addNewGroup }}>
-      {children}
-    </GroupContext.Provider>
+    <GroupContext.Provider value={group}>{children}</GroupContext.Provider>
   );
 }
 
-export function useGroup(): GroupContextType {
+export function useGroup() {
   const context = useContext(GroupContext);
 
   if (!context) {

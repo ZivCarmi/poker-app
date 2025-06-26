@@ -4,4 +4,5 @@ export type User = {
   gamesPlayed: number;
   moneyEarned: number;
   moneySpent: number;
+  avatar_url: string;
 };

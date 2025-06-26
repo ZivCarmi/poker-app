@@ -3,13 +3,15 @@ import { User } from "./User";
 export type Group = {
   id: string;
   name: string;
-  createdBy: string;
-  createdAt: string;
+  created_by: string;
+  created_at: Date;
+  invite_token: string;
+  invite_token_expires_at: Date;
 };
 
 export type GroupMember = {
-  groupId: Group["id"];
-  userId: User["id"];
+  group_id: Group["id"];
+  user_id: User["id"];
   role: "admin" | "member";
-  joinedAt: Date;
+  joined_at: Date;
 };

@@ -12,6 +12,8 @@ const Profile = () => {
 
   return (
     <View className="gap-4">
+      <Text>id: {user?.id}</Text>
+      <Text>email: {user?.email}</Text>
       <View className="flex-row items-center gap-4">
         <Avatar
           className="w-20 h-20"

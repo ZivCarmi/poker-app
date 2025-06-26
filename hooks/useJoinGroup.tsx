@@ -12,11 +12,11 @@ const useJoinGroup = () => {
     mutationFn: joinGroup,
     onSuccess: (group) => {
       console.log("Successfully joined group:", group);
-      queryClient.invalidateQueries({ queryKey: ["group", group.groupId] });
+      queryClient.invalidateQueries({ queryKey: ["group", group.group_id] });
 
       replace({
         pathname: "/[groupId]",
-        params: { groupId: group.groupId },
+        params: { groupId: group.group_id },
       });
     },
     onError: (error) => {

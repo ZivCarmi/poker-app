@@ -15,7 +15,6 @@ const GroupsLayout = () => {
           fontSize: 22,
         },
         headerShadowVisible: false,
-        // headerLeft: () => <View style={{ marginLeft: -16, marginRight: 16 }} />,
       }}
     >
       <Stack.Screen
@@ -29,13 +28,7 @@ const GroupsLayout = () => {
           animation: "fade_from_bottom",
         }}
       />
-      <Stack.Screen
-        name="[groupId]"
-        options={{
-          headerShown: false,
-          headerRight: () => <NewMeetingButton />,
-        }}
-      />
+      <Stack.Screen name="[groupId]" options={{ headerShown: false }} />
     </Stack>
   );
 };

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchGroupByInviteToken } from "~/api/invites";
+import { fetchGroupByInviteToken } from "~/api/groups";
 
-const useFetchGroupByInviteLink = (inviteToken: string) => {
+const useGroupByInviteToken = (inviteToken: string) => {
   return useQuery({
     queryKey: ["invites", inviteToken],
     enabled: !!inviteToken,
@@ -11,4 +11,4 @@ const useFetchGroupByInviteLink = (inviteToken: string) => {
   });
 };
 
-export default useFetchGroupByInviteLink;
+export default useGroupByInviteToken;

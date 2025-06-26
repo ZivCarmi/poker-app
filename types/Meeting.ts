@@ -1,17 +1,26 @@
+import { User } from "./User";
+
 export type Meeting = {
   id: string;
   groupId: string;
-  createdBy: string;
+  created_by: string;
   title?: string;
   description?: string;
   date: Date;
   location?: string;
   status: "upcoming" | "ongoing" | "completed";
-  createdAt: Date;
+  created_at: Date;
 };
 
 export type MeetingParticipant = {
-  userId: string;
-  meetingId: string;
-  joinedAt: string;
+  user_id: string;
+  username: string;
+  avatar_url: User["avatar_url"];
+};
+
+export type MeetingWithParticipants = Omit<
+  Meeting,
+  "groupId" | "created_at"
+> & {
+  meeting_participants: MeetingParticipant[];
 };

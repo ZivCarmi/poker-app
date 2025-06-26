@@ -1,6 +1,6 @@
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
-import { useRouter } from "expo-router";
+import { Href, useLocalSearchParams, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -67,6 +67,7 @@ const signOut = async () => {
 };
 
 export default function Auth() {
+  const { redirect } = useLocalSearchParams();
   const { user } = useAuth();
   const router = useRouter();
 
@@ -88,7 +89,7 @@ export default function Auth() {
     <Button
       onPress={async () => {
         await signIn();
-        router.replace("/");
+        router.replace((redirect || "/") as Href);
       }}
       className="bg-blue-500"
     >

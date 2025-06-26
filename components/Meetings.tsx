@@ -1,15 +1,9 @@
 import { FlashList } from "@shopify/flash-list";
-import {
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, View } from "react-native";
 import { useAuth } from "~/context/auth-context";
 import useCheckInMeeting from "~/hooks/useCheckInMeeting";
-import useFetchMeetingParticipants from "~/hooks/useFetchMeetingParticipants";
 import { MapPin } from "~/lib/icons/MapPin";
-import { Meeting } from "~/types/Meeting";
+import { MeetingParticipant, MeetingWithParticipants } from "~/types/Meeting";
 import MeetParticipants from "./MeetParticipants";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -24,15 +18,13 @@ import {
 import { Text } from "./ui/text";
 import { Muted, Small } from "./ui/typography";
 
-type FetchedMeeting = Omit<Meeting, "groupId" | "createdAt">;
-
 export type CheckInMeetingData = {
   checkOut?: boolean;
   userId: string;
   meetingId: string;
 };
 
-const Meetings = ({ meetings }: { meetings: FetchedMeeting[] }) => {
+const Meetings = ({ meetings }: { meetings: MeetingWithParticipants[] }) => {
   if (meetings.length === 0) return null;
 
   return (
@@ -74,7 +66,10 @@ const Meetings = ({ meetings }: { meetings: FetchedMeeting[] }) => {
                 <Small>{meeting.location}</Small>
               </CardContent>
             )}
-            <MeetingCardFooter meetingId={meeting.id} />
+            <MeetingCardFooter
+              meetingId={meeting.id}
+              participants={meeting.meeting_participants}
+            />
           </Card>
         )}
       />
@@ -82,40 +77,21 @@ const Meetings = ({ meetings }: { meetings: FetchedMeeting[] }) => {
   );
 };
 
-const MeetingCardFooter = ({ meetingId }: { meetingId: string }) => {
+const MeetingCardFooter = ({
+  meetingId,
+  participants,
+}: {
+  meetingId: string;
+  participants: MeetingParticipant[];
+}) => {
   const { user } = useAuth();
-  const {
-    data: participants,
-    isLoading,
-    error,
-    refetch,
-  } = useFetchMeetingParticipants(meetingId);
-  const isCheckedIn = participants?.find(
-    (participant) => user?.id === participant.user_id
+  const isCheckedIn = participants.find(
+    (participant) => participant.user_id === user?.id
   );
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>{error.message}</Text>
-        <TouchableOpacity onPress={() => refetch()}>
-          <Text style={{ color: "blue", marginTop: 10 }}>נסה שוב</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
 
   return (
     <CardFooter>
-      {participants && <MeetParticipants participants={participants} />}
+      <MeetParticipants participants={participants} />
       <CheckInButton isCheckedIn={!!isCheckedIn} meetingId={meetingId} />
     </CardFooter>
   );
@@ -130,8 +106,6 @@ const CheckInButton = ({
 }) => {
   const { user } = useAuth();
   const { mutate } = useCheckInMeeting();
-
-  console.log(meetingId, user?.id);
 
   const checkIn = () => {
     if (!user) {

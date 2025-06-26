@@ -3,17 +3,12 @@ import { View } from "react-native";
 import { getFirstLetters } from "~/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Text } from "./ui/text";
-
-type FetchedMeetParticipant = {
-  user_id: string;
-  username: string;
-  avatar_url?: string;
-};
+import { MeetingParticipant } from "~/types/Meeting";
 
 const MeetParticipants = ({
   participants,
 }: {
-  participants: FetchedMeetParticipant[];
+  participants: MeetingParticipant[];
 }) => {
   return (
     <FlashList
@@ -29,7 +24,7 @@ const MeetParticipants = ({
 const MeetParticipant = ({
   participant,
 }: {
-  participant: FetchedMeetParticipant;
+  participant: MeetingParticipant;
 }) => {
   return (
     <View>

@@ -10,15 +10,9 @@ export const joinGroup = async ({
 }) => {
   const { data, error } = await supabase
     .from("group_members")
-    .insert({
-      group_id: groupId,
-      user_id: userId,
-    })
+    .insert({ group_id: groupId, user_id: userId })
     .select()
     .single();
-
-  console.log({ data });
-  console.log({ error });
 
   if (error) throw new Error(error.message);
 
@@ -43,14 +37,21 @@ export const fetchUserGroups = async (userId?: string) => {
   return data;
 };
 
-export const fetchUserGroup = async (groupId: string) => {
+export const fetchGroup = async (groupId: string) => {
   const { data, error } = await supabase
     .from("groups")
     .select(
       `
       *,
       meetings (
-        id, created_by, title, description, location, date, status
+        id, created_by, title, description, location, date, status,
+        meeting_participants (
+          user_id,
+          ...users (
+            username,
+            avatar_url
+          )
+        )
       )
       `
     )
@@ -71,6 +72,31 @@ export const createGroup = async ({
     .from("groups")
     .insert([{ name, created_by: createdBy }])
     .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const isUserInGroup = async (userId?: string, groupId?: string) => {
+  const { count, error } = await supabase
+    .from("group_members")
+    .select("*", { count: "exact", head: true })
+    .eq("group_id", groupId)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+
+  return !!count;
+};
+
+export const fetchGroupByInviteToken = async (inviteToken: string) => {
+  const { data, error } = await supabase
+    .from("groups")
+    .select(`*`)
+    .eq("invite_token", inviteToken)
+    .gt("invite_token_expires_at", new Date().toISOString())
     .single();
 
   if (error) throw new Error(error.message);

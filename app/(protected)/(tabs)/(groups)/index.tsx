@@ -3,11 +3,11 @@ import { Link } from "expo-router";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { Large, Muted } from "~/components/ui/typography";
-import useFetchUserGroups from "~/hooks/useFetchUserGroups";
+import useUserGroups from "~/hooks/useUserGroups";
 import { ChevronRight } from "~/lib/icons/ChevronRight";
 
 const Groups = () => {
-  const { data: groups, isLoading, error, refetch } = useFetchUserGroups();
+  const { data: groups, isLoading, error, refetch } = useUserGroups();
 
   if (isLoading) {
     return (
