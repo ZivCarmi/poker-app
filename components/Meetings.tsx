@@ -37,6 +37,7 @@ const Meetings = ({ meetings }: { meetings: MeetingWithParticipants[] }) => {
         data={meetings}
         estimatedItemSize={191}
         showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
         ItemSeparatorComponent={() => <View className="py-1" />}
         renderItem={({ item: meeting }) => (
           <Card className="w-full max-w-sm m-auto" key={meeting.id}>

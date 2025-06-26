@@ -5,29 +5,41 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Text } from "./ui/text";
 import { MeetingParticipant } from "~/types/Meeting";
 
+// NEED TO HANDLE 4 MAX
+// IF MORE THAN 4 SHOW +{number}
 const MeetParticipants = ({
   participants,
 }: {
   participants: MeetingParticipant[];
 }) => {
   return (
-    <FlashList
-      data={participants}
-      estimatedItemSize={43}
-      renderItem={({ item: participant }) => (
-        <MeetParticipant key={participant.user_id} participant={participant} />
-      )}
-    />
+    <View className="grow flex-row">
+      <FlashList
+        horizontal
+        data={participants}
+        estimatedItemSize={43}
+        keyExtractor={(item) => item.user_id}
+        renderItem={({ item: participant, index }) => (
+          <MeetParticipant
+            className={index !== 0 ? "-ms-1" : undefined}
+            key={participant.user_id}
+            participant={participant}
+          />
+        )}
+      />
+    </View>
   );
 };
 
 const MeetParticipant = ({
   participant,
+  className,
 }: {
   participant: MeetingParticipant;
+  className?: string;
 }) => {
   return (
-    <View>
+    <View className={className}>
       <Avatar alt={`${participant.username}'s Avatar`}>
         <AvatarImage source={{ uri: participant.avatar_url }} />
         <AvatarFallback>

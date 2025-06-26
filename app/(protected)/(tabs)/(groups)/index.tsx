@@ -42,6 +42,7 @@ const Groups = () => {
     <FlashList
       data={groups}
       estimatedItemSize={43}
+      keyExtractor={(item) => item.group_id}
       renderItem={({ item }) => (
         <Link
           className="flex items-center py-2 rtl:bg-black"

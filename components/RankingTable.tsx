@@ -84,6 +84,7 @@ function RankingTable() {
             contentContainerStyle={{
               paddingBottom: insets.bottom,
             }}
+            keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
             renderItem={({ item: player, index }) => {
               return (

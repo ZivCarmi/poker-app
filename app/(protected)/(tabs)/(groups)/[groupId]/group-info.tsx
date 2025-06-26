@@ -59,6 +59,7 @@ const GroupInfo = () => {
             data={members}
             ItemSeparatorComponent={() => <View className="py-1" />}
             estimatedItemSize={50}
+            keyExtractor={(item) => item.user_id}
             renderItem={({ item: groupUser }) => (
               <View className="flex-row items-center gap-2">
                 <Avatar
