@@ -46,7 +46,10 @@ const Groups = () => {
       renderItem={({ item }) => (
         <Link
           className="flex items-center py-2 rtl:bg-black"
-          href={{ pathname: "/[groupId]", params: { groupId: item.group_id } }}
+          href={{
+            pathname: "/groups/[groupId]",
+            params: { groupId: item.group_id },
+          }}
         >
           <View className="flex flex-col gap-1 text-left">
             <Large>{item.name}</Large>

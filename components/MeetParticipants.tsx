@@ -14,19 +14,13 @@ const MeetParticipants = ({
 }) => {
   return (
     <View className="grow flex-row">
-      <FlashList
-        horizontal
-        data={participants}
-        estimatedItemSize={43}
-        keyExtractor={(item) => item.user_id}
-        renderItem={({ item: participant, index }) => (
-          <MeetParticipant
-            className={index !== 0 ? "-ms-1" : undefined}
-            key={participant.user_id}
-            participant={participant}
-          />
-        )}
-      />
+      {participants.map((participant, index) => (
+        <MeetParticipant
+          className={index !== 0 ? "-ms-1" : undefined}
+          key={participant.user_id}
+          participant={participant}
+        />
+      ))}
     </View>
   );
 };

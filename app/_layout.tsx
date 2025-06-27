@@ -40,8 +40,12 @@ const usePlatformSpecificSetup = Platform.select({
 });
 
 export default function RootLayout() {
-  usePlatformSpecificSetup();
   const { isDarkColorScheme } = useColorScheme();
+
+  usePlatformSpecificSetup();
+
+  console.log({ isDarkColorScheme });
+  // console.log(Appearance.getColorScheme());
 
   return (
     <QueryClientProvider client={client}>

@@ -54,7 +54,7 @@ const GroupLayout = () => {
                 <Link
                   className="grow text-left"
                   href={{
-                    pathname: "/[groupId]/group-info",
+                    pathname: "/groups/[groupId]/group-info",
                     params: { groupId: group.id },
                   }}
                 >

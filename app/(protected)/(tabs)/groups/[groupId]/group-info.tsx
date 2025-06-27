@@ -58,6 +58,7 @@ const GroupInfo = () => {
           <FlashList
             data={members}
             ItemSeparatorComponent={() => <View className="py-1" />}
+            showsVerticalScrollIndicator={false}
             estimatedItemSize={50}
             keyExtractor={(item) => item.user_id}
             renderItem={({ item: groupUser }) => (

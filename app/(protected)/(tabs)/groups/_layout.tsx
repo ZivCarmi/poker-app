@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import NewGroupButton from "~/components/NewGroupButton";
-import NewMeetingButton from "~/components/NewMeetingButton";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`

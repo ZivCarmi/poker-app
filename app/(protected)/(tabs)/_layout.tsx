@@ -52,7 +52,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="(groups)"
+        name="groups"
         options={{
           headerShown: false,
           tabBarLabel: "Groups",

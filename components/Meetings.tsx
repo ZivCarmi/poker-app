@@ -17,9 +17,10 @@ import {
 } from "./ui/card";
 import { Text } from "./ui/text";
 import { Muted, Small } from "./ui/typography";
+import { User } from "~/types/User";
+import useCheckOutMeeting from "~/hooks/useCheckOutMeeting";
 
 export type CheckInMeetingData = {
-  checkOut?: boolean;
   userId: string;
   meetingId: string;
 };
@@ -93,7 +94,13 @@ const MeetingCardFooter = ({
   return (
     <CardFooter>
       <MeetParticipants participants={participants} />
-      <CheckInButton isCheckedIn={!!isCheckedIn} meetingId={meetingId} />
+      {user?.id && (
+        <CheckInButton
+          isCheckedIn={!!isCheckedIn}
+          meetingId={meetingId}
+          userId={user.id}
+        />
+      )}
     </CardFooter>
   );
 };
@@ -101,34 +108,25 @@ const MeetingCardFooter = ({
 const CheckInButton = ({
   isCheckedIn,
   meetingId,
+  userId,
 }: {
   isCheckedIn: boolean;
   meetingId: string;
+  userId: string;
 }) => {
-  const { user } = useAuth();
-  const { mutate } = useCheckInMeeting();
+  const { mutate: checkInMutation } = useCheckInMeeting();
+  const { mutate: checkOutMutation } = useCheckOutMeeting();
 
-  const checkIn = () => {
-    if (!user) {
-      console.error("Unauthenticated user");
-      return;
-    }
+  const checkInOrOut = () => {
+    const checkInOrOutData: CheckInMeetingData = { userId, meetingId };
 
-    if (isCheckedIn) {
-      console.log("checked in returning...");
-      return;
-    }
-
-    const checkInMeetingData: CheckInMeetingData = {
-      userId: user.id,
-      meetingId,
-    };
-
-    mutate(checkInMeetingData);
+    isCheckedIn
+      ? checkOutMutation(checkInOrOutData)
+      : checkInMutation(checkInOrOutData);
   };
 
   return (
-    <Button onPress={checkIn}>
+    <Button onPress={checkInOrOut}>
       <Text>{isCheckedIn ? "Check-out" : "Check-in"}</Text>
     </Button>
   );

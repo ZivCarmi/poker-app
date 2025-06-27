@@ -48,15 +48,27 @@ export const fetchMeetingParticipants = async (meetingId: string) => {
 };
 
 export const checkInMeeting = async (checkInData: CheckInMeetingData) => {
-  const { userId, meetingId, checkOut } = checkInData;
-
-  if (checkOut) {
-    return;
-  }
+  const { userId, meetingId } = checkInData;
 
   const { data, error } = await supabase
     .from("meeting_participants")
     .insert([{ user_id: userId, meeting_id: meetingId }])
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const checkOutMeeting = async (checkOutData: CheckInMeetingData) => {
+  const { userId, meetingId } = checkOutData;
+
+  const { data, error } = await supabase
+    .from("meeting_participants")
+    .delete()
+    .eq("user_id", userId)
+    .eq("meeting_id", meetingId)
     .select()
     .single();
 
