@@ -6,9 +6,9 @@ const useUserGroups = () => {
   const { user } = useAuth();
 
   return useQuery({
+    queryFn: () => fetchUserGroups(user?.id),
     queryKey: ["groups", user?.id],
     enabled: !!user?.id,
-    queryFn: () => fetchUserGroups(user?.id),
   });
 };
 

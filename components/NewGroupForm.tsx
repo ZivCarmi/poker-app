@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { z } from "zod";
-import { useAuth } from "~/context/auth-context";
 import useCreateGroup from "~/hooks/useCreateGroup";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -18,11 +17,8 @@ const newGroupSchema = z.object({
 
 export type GroupData = z.infer<typeof newGroupSchema>;
 
-export type GroupDataWithCreatedBy = GroupData & { createdBy: string };
-
 const NewGroupForm = () => {
   const { mutate } = useCreateGroup();
-  const { user } = useAuth();
   const {
     control,
     handleSubmit,
@@ -34,18 +30,7 @@ const NewGroupForm = () => {
 
   const onSubmit: SubmitHandler<GroupData> = async (data) => {
     console.log("Form submitted with data:", data);
-
-    if (!user) {
-      console.error("Unauthorized user");
-      return;
-    }
-
-    const newGroupData: GroupDataWithCreatedBy = {
-      name: data.name,
-      createdBy: user.id,
-    };
-
-    mutate(newGroupData);
+    mutate(data);
   };
 
   return (

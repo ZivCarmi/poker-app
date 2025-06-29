@@ -28,6 +28,19 @@ export const createMeeting = async (
   return data;
 };
 
+export const deleteMeeting = async (meetingId: string) => {
+  const { data, error } = await supabase
+    .from("meetings")
+    .delete()
+    .eq("id", meetingId)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
 export const fetchMeetingParticipants = async (meetingId: string) => {
   const { data, error } = await supabase
     .from("meeting_participants")

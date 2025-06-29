@@ -9,21 +9,16 @@ import {
 import NewMeetingButton from "~/components/NewMeetingButton";
 import { Large } from "~/components/ui/typography";
 import { GroupProvider } from "~/context/group-context";
-import useFetchGroup from "~/hooks/useFetchGroup";
+import useUserGroup from "~/hooks/useUserGroup";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 
 const GroupLayout = () => {
   const { groupId } = useLocalSearchParams();
-  const {
-    data: group,
-    isLoading,
-    error,
-    refetch,
-  } = useFetchGroup(groupId as string);
+  const { data, isLoading, error, refetch } = useUserGroup(groupId as string);
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View className="flex- justify-center items-center">
         <ActivityIndicator size="large" />
       </View>
     );
@@ -31,7 +26,7 @@ const GroupLayout = () => {
 
   if (error) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View className="flex- justify-center items-center">
         <Text>{error.message}</Text>
         <TouchableOpacity onPress={() => refetch()}>
           <Text style={{ color: "blue", marginTop: 10 }}>נסה שוב</Text>
@@ -41,7 +36,7 @@ const GroupLayout = () => {
   }
 
   return (
-    <GroupProvider group={group}>
+    <GroupProvider group={data!.group}>
       <Stack>
         <Stack.Screen
           name="index"
@@ -55,10 +50,10 @@ const GroupLayout = () => {
                   className="grow text-left"
                   href={{
                     pathname: "/groups/[groupId]/group-info",
-                    params: { groupId: group.id },
+                    params: { groupId: data?.group.id },
                   }}
                 >
-                  <Large>{group.name}</Large>
+                  <Large>{data?.group.name}</Large>
                 </Link>
                 <NewMeetingButton />
               </View>

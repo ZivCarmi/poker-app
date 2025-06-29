@@ -44,9 +44,6 @@ export default function RootLayout() {
 
   usePlatformSpecificSetup();
 
-  console.log({ isDarkColorScheme });
-  // console.log(Appearance.getColorScheme());
-
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>

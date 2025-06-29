@@ -14,6 +14,8 @@ const GroupContext = createContext<GroupContextType>({
   invite_token: "",
   invite_token_expires_at: new Date(),
   meetings: [],
+  members: [],
+  members_count: 0,
 });
 
 export function GroupProvider({

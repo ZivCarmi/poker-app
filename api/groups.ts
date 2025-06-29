@@ -1,4 +1,5 @@
-import { GroupDataWithCreatedBy } from "~/components/NewGroupForm";
+import { GroupData } from "~/components/NewGroupForm";
+import { LeaveGroupParams } from "~/hooks/useLeaveGroup";
 import { supabase } from "~/lib/supabase";
 
 export const joinGroup = async ({
@@ -36,11 +37,17 @@ export const fetchUserGroups = async (userId?: string) => {
 };
 
 export const fetchGroup = async (groupId: string) => {
-  const { data, error } = await supabase
+  const { data, error, status } = await supabase
     .from("groups_with_members_count")
     .select(
       `
-      *,
+      id,
+      name,
+      created_by,
+      created_at,
+      invite_token,
+      invite_token_expires_at,
+      members_count,
       members:group_members (
         user_id,
         role,
@@ -65,18 +72,31 @@ export const fetchGroup = async (groupId: string) => {
     .order("date", { referencedTable: "meetings_with_participant_count" })
     .single();
 
+  console.log({ status });
+
+  if (error) throw new Error(error.message);
+
+  return { group: data, status };
+};
+
+export const createGroup = async ({ name }: GroupData) => {
+  const { data, error } = await supabase
+    .from("groups")
+    .insert([{ name }])
+    .select()
+    .single();
+
   if (error) throw new Error(error.message);
 
   return data;
 };
 
-export const createGroup = async ({
-  name,
-  createdBy,
-}: GroupDataWithCreatedBy) => {
+export const leaveGroup = async ({ userId, groupId }: LeaveGroupParams) => {
   const { data, error } = await supabase
-    .from("groups")
-    .insert([{ name, created_by: createdBy }])
+    .from("group_members")
+    .delete()
+    .eq("group_id", groupId)
+    .eq("user_id", userId)
     .select()
     .single();
 

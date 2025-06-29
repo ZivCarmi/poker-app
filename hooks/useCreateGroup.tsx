@@ -1,21 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { createGroup } from "~/api/groups";
-import { GroupDataWithCreatedBy } from "~/components/NewGroupForm";
+import { GroupData } from "~/components/NewGroupForm";
+import { useAuth } from "~/context/auth-context";
 import { Group } from "~/types/Group";
 
 const useCreateGroup = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const { replace } = useRouter();
 
-  return useMutation<Group, Error, GroupDataWithCreatedBy>({
+  return useMutation<Group, Error, GroupData>({
     mutationFn: createGroup,
     onSuccess: (group) => {
       console.log("Group created successfully:", group);
-      queryClient.invalidateQueries({ queryKey: ["group", group.id] });
+      queryClient.invalidateQueries({ queryKey: ["groups", user?.id] });
 
       replace({
-        pathname: "/[groupId]",
+        pathname: "/groups/[groupId]",
         params: { groupId: group.id },
       });
     },

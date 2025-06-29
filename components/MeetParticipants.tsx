@@ -1,9 +1,8 @@
-import { FlashList } from "@shopify/flash-list";
 import { View } from "react-native";
 import { getFirstLetters } from "~/lib/utils";
+import { MeetingParticipant } from "~/types/Meeting";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Text } from "./ui/text";
-import { MeetingParticipant } from "~/types/Meeting";
 
 // NEED TO HANDLE 4 MAX
 // IF MORE THAN 4 SHOW +{number}

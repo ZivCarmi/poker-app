@@ -15,7 +15,7 @@ const useJoinGroup = () => {
       queryClient.invalidateQueries({ queryKey: ["group", group.group_id] });
 
       replace({
-        pathname: "/[groupId]",
+        pathname: "/groups/[groupId]",
         params: { groupId: group.group_id },
       });
     },

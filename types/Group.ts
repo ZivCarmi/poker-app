@@ -8,7 +8,7 @@ export type Group = {
   invite_token: string;
   invite_token_expires_at: Date;
   members_count: number;
-  members: GroupMemberWithUser[];
+  members: GroupUser[];
 };
 
 export type GroupMember = {
@@ -18,7 +18,7 @@ export type GroupMember = {
   joined_at: Date;
 };
 
-export type GroupMemberWithUser = GroupMember & {
+export type GroupUser = Omit<GroupMember, "group_id" | "joined_at"> & {
   username: User["username"];
   avatar_url: string;
 };
